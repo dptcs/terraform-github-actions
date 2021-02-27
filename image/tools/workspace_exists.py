@@ -2,8 +2,13 @@
 
 import sys
 
+def debug(msg: str) -> None:
+    for line in msg.splitlines():
+        sys.stderr.write(f'::debug::{line}\n')
+
 def workspace_exists(stdin, workspace: str) -> bool:
     for line in stdin:
+        debug(line)
         if line.strip().strip('*').strip() == workspace.strip():
             return True
 
