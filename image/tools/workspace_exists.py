@@ -10,8 +10,10 @@ def workspace_exists(stdin, workspace: str) -> bool:
     for line in stdin:
         debug(line)
         if line.strip().strip('*').strip() == workspace.strip():
+            debug('workspace exists')
             return True
 
+    debug('workspace doesn\'t exist')
     return False
 
 if __name__ == '__main__':
