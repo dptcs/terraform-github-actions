@@ -53,13 +53,13 @@ function detect-tfmask() {
 
 function setup() {
   if [[ -n "$INPUT_PAT" ]]; then
-    cat <<EOF > creds
-      #!/bin/sh
-      echo protocol=https
-      echo host=github.com
-      echo username=foo
-      echo password=$INPUT_PAT
-    EOF
+cat <<EOF > creds
+  #!/bin/sh
+  echo protocol=https
+  echo host=github.com
+  echo username=foo
+  echo password=$INPUT_PAT
+EOF
     sudo install creds /usr/local/bin/creds
     git config --global credential.helper "creds"
   fi
