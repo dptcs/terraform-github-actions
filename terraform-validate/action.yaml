@@ -6,6 +6,9 @@ inputs:
   path:
     description: Path to the terraform configuration
     required: true
+  pat:
+   description: Personal access token if required for private repos
+   required: false
 
 runs:
   using: docker
