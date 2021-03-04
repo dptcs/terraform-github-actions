@@ -3,6 +3,9 @@ description: Apply terraform plan
 author: Daniel Flook
 
 inputs:
+  pat:
+   description: Personal access token if required for private repos
+   required: false
   path:
     description: Path to the terraform configuration
     required: true
