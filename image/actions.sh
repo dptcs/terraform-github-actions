@@ -53,15 +53,8 @@ function detect-tfmask() {
 
 function setup() {
   if [[ -n "$INPUT_PAT" ]]; then
-cat <<EOF > creds
-  #!/bin/sh
-  echo protocol=https
-  echo host=github.com
-  echo username=foo
-  echo password=$INPUT_PAT
-EOF
-    sudo install creds /usr/local/bin/creds
-    git config --global credential.helper "creds"
+    git config --local --remove-section http."https://github.com/"
+    git config --global url."https://foo:$INPUT_PAT@github.com/DigitalInnovation".insteadOf "https://github.com/DigitalInnovation"
   fi
 
   TERRAFORM_BIN_DIR="$HOME/.dflook-terraform-bin-dir"
