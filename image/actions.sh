@@ -52,6 +52,18 @@ function detect-tfmask() {
 }
 
 function setup() {
+  if [[ -n "$INPUT_PAT" ]]; then
+    cat <<EOF > creds
+      #!/bin/sh
+      echo protocol=https
+      echo host=github.com
+      echo username=foo
+      echo password=$INPUT_PAT
+    EOF
+    sudo install creds /usr/local/bin/creds
+    git config --global credential.helper "creds"
+  fi
+
   TERRAFORM_BIN_DIR="$HOME/.dflook-terraform-bin-dir"
   export TF_DATA_DIR="$HOME/.dflook-terraform-data-dir"
   export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
