@@ -53,7 +53,7 @@ function detect-tfmask() {
 
 function setup() {
   if [[ -n "$INPUT_PAT" ]]; then
-    git config --local --remove-section http."https://github.com/"
+    git config --local --remove-section http."https://github.com/" || true
     git config --global url."https://foo:$INPUT_PAT@github.com/DigitalInnovation".insteadOf "https://github.com/DigitalInnovation"
   fi
 
