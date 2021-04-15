@@ -31,6 +31,8 @@ the master branch:
 
 ## Inputs
 
+These input values must be the same as any `terraform-plan` for the same configuration. (unless auto_approve: true)
+
 * `path`
 
   Path to the terraform configuration to apply
@@ -56,9 +58,50 @@ the master branch:
   - Type: string
   - Optional
 
-* `var`
+* `variables`
 
-  Comma separated list of terraform vars to set
+  Variables to set for the terraform plan. This should be valid terraform syntax - like a [variable definition file](https://www.terraform.io/docs/language/values/variables.html#variable-definitions-tfvars-files).
+
+  ```yaml
+  with:
+    variables: |
+      image_id = "${{ secrets.AMI_ID }}"
+      availability_zone_names = [
+        "us-east-1a",
+        "us-west-1c",
+      ]
+  ```
+
+  Variables set here override any given in `var_file`s.
+
+  - Type: string
+  - Optional
+
+* ~~`var`~~
+
+  > :warning: **Deprecated**: Use the `variables` input instead.
+
+  Comma separated list of terraform vars to set.
+
+  This is deprecated due to the following limitations:
+  - Only primitive types can be set with `var` - number, bool and string.
+  - String values may not contain a comma.
+  - Values set with `var` will be overridden by values contained in `var_file`s
+
+  You can change from `var` to `variables` by putting each variable on a separate line and ensuring each string value is quoted.
+
+  For example:
+  ```yaml
+  with:
+    var: instance_type=m5.xlarge,nat_type=instance
+  ```
+  Becomes:
+  ```yaml
+  with:
+    variables: |
+      instance_type="m5.xlarge"
+      nat_type="instance"
+  ```
 
   - Type: string
   - Optional
@@ -115,16 +158,56 @@ the master branch:
 
 ## Environment Variables
 
-### `GITHUB_TOKEN`
+* `GITHUB_TOKEN`
 
-The GitHub authorization token to use to fetch an approved plan from a PR.
-The token provided by GitHub Actions can be used - it can be passed by
-using the `${{ secrets.GITHUB_TOKEN }}` expression, e.g.
+  The GitHub authorization token to use to fetch an approved plan from a PR.
+  The token provided by GitHub Actions can be used - it can be passed by
+  using the `${{ secrets.GITHUB_TOKEN }}` expression, e.g.
 
-```yaml
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
+  ```yaml
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ```
+
+  - Type: string
+  - Optional
+
+* `TERRAFORM_CLOUD_TOKENS`
+
+  API tokens for terraform cloud hosts, of the form `<host>=<token>`. Multiple tokens may be specified, one per line.
+  These tokens may be used with the `remote` backend and for fetching required modules from the registry.
+
+  e.g for terraform cloud:
+  ```yaml
+  env:
+    TERRAFORM_CLOUD_TOKENS: app.terraform.io=${{ secrets.TF_CLOUD_TOKEN }}
+  ```
+
+  With Terraform Enterprise or other registries:
+  ```yaml
+  env:
+    TERRAFORM_CLOUD_TOKENS: |
+      app.terraform.io=${{ secrets.TF_CLOUD_TOKEN }}
+      terraform.example.com=${{ secrets.TF_REGISTRY_TOKEN }}
+  ```
+
+  - Type: string
+  - Optional
+
+* `TERRAFORM_SSH_KEY`
+
+  A SSH private key that terraform will use to fetch git module sources.
+
+  This should be in PEM format.
+
+  For example:
+  ```yaml
+  env:
+    TERRAFORM_SSH_KEY: ${{ secrets.TERRAFORM_SSH_KEY }}
+  ```
+
+  - Type: string
+  - Optional
 
 ## Outputs
 

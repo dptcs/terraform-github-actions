@@ -103,11 +103,15 @@ function relative_to() {
 }
 
 function init() {
+  write_credentials
+
   rm -rf "$TF_DATA_DIR"
   (cd "$INPUT_PATH" && terraform init -input=false -backend=false)
 }
 
 function init-backend() {
+  write_credentials
+
   INIT_ARGS=""
 
   if [[ -n "$INPUT_BACKEND_CONFIG_FILE" ]]; then
@@ -127,7 +131,7 @@ function init-backend() {
   rm -rf "$TF_DATA_DIR"
 
   set +e
-  (cd "$INPUT_PATH" && TF_WORKSPACE=$INPUT_WORKSPACE terraform init -input=false -lock-timeout=300s $INIT_ARGS \
+  (cd "$INPUT_PATH" && TF_WORKSPACE=$INPUT_WORKSPACE terraform init -input=false $INIT_ARGS \
       2>"$PLAN_DIR/init_error.txt")
 
   local INIT_EXIT=$?
@@ -170,6 +174,11 @@ function set-plan-args() {
       done
   fi
 
+  if [[ -n "$INPUT_VARIABLES" ]]; then
+    echo "$INPUT_VARIABLES" > /.terraform-variables.tfvars
+    PLAN_ARGS="$PLAN_ARGS -var-file=/.terraform-variables.tfvars"
+  fi
+
   export PLAN_ARGS
 }
 
@@ -188,4 +197,12 @@ function update_status() {
 
 function random_string() {
   python3 -c "import random; import string; print(''.join(random.choice(string.ascii_lowercase) for i in range(8)))"
+}
+
+function write_credentials() {
+  format_tf_credentials >> $HOME/.terraformrc
+
+  echo "$TERRAFORM_SSH_KEY" >> /.ssh/id_rsa
+  chmod 600 /.ssh/id_rsa
+  chmod 700 /.ssh
 }

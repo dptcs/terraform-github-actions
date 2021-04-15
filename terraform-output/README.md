@@ -36,6 +36,45 @@ Retrieve the root-level outputs from a terraform configuration.
   - Type: string
   - Optional
 
+## Environment Variables
+
+* `TERRAFORM_CLOUD_TOKENS`
+
+  API tokens for terraform cloud hosts, of the form `<host>=<token>`. Multiple tokens may be specified, one per line.
+  These tokens may be used with the `remote` backend and for fetching required modules from the registry.
+
+  e.g for terraform cloud:
+  ```yaml
+  env:
+    TERRAFORM_CLOUD_TOKENS: app.terraform.io=${{ secrets.TF_CLOUD_TOKEN }}
+  ```
+
+  With Terraform Enterprise or other registries:
+  ```yaml
+  env:
+    TERRAFORM_CLOUD_TOKENS: |
+      app.terraform.io=${{ secrets.TF_CLOUD_TOKEN }}
+      terraform.example.com=${{ secrets.TF_REGISTRY_TOKEN }}
+  ```
+
+  - Type: string
+  - Optional
+
+* `TERRAFORM_SSH_KEY`
+
+  A SSH private key that terraform will use to fetch git module sources.
+
+  This should be in PEM format.
+
+  For example:
+  ```yaml
+  env:
+    TERRAFORM_SSH_KEY: ${{ secrets.TERRAFORM_SSH_KEY }}
+  ```
+
+  - Type: string
+  - Optional
+
 ## Outputs
 
 An action output will be created for each output of the terraform configuration.
@@ -125,5 +164,5 @@ jobs:
 Which will print to the workflow log:
 ```
 The vpc-id is vpc-01463b6b84e1454ce
-The subnet-ids are is subnet-053008016a2c1768c,subnet-07d4ce437c43eba2f,subnet-0a5f8c3a20023b8c0
+The subnet-ids are subnet-053008016a2c1768c,subnet-07d4ce437c43eba2f,subnet-0a5f8c3a20023b8c0
 ```

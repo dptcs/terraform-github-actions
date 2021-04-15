@@ -8,9 +8,46 @@ The actions are versioned as a suite. Some actions may have no change in behavio
 
 When using an action you can specify the version as:
 
-- `@v1.6.0` to use an exact release
-- `@v1.6` to use the latest patch release for the specific minor version
+- `@v1.9.0` to use an exact release
+- `@v1.9` to use the latest patch release for the specific minor version
 - `@v1` to use the latest patch release for the specific major version
+
+## [1.9.0] - 2021-04-10
+
+### Added
+- `variables` input for actions that use terraform input variables.
+
+  This value should be valid terraform syntax - like a [variable definition file](https://www.terraform.io/docs/language/values/variables.html#variable-definitions-tfvars-files).
+  Variable values set in `variables` override any given in var_files.
+  See action documentation for details, e.g. [terraform-plan](https://github.com/dflook/terraform-github-actions/tree/master/terraform-plan#inputs).
+
+### Deprecated
+- The `var` input has been deprecated due to the following limitations:
+  - Only primitive types can be set with `var` - number, bool and string.
+  - String values may not contain a comma.
+  - Values set with `var` will be overridden by values contained in `var_file`s
+
+  `variables` is the preferred way to set input variables.
+
+## [1.8.0] - 2021-04-05
+
+### Added
+- `TERRAFORM_CLOUD_TOKENS` environment variable for use with Terraform Cloud/Enterprise etc
+  when using module registries or a `remote` backend.
+
+- `TERRAFORM_SSH_KEY` environment variable to configure an SSH private key to use for
+  [Git Repository](https://www.terraform.io/docs/language/modules/sources.html#generic-git-repository) module sources.
+
+See individual actions for details, e.g. [terraform-validate](https://github.com/dflook/terraform-github-actions/tree/master/terraform-validate#environment-variables).
+
+## [1.7.0] - 2021-04-02
+
+### Added
+- Support for the [`pull_request_target`](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target) event
+- Support for the [`pull_request_review`](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_review) event
+
+### Fixed
+- Terraform 0.15 compatibility
 
 ## [1.6.0] - 2021-02-25
 
@@ -106,6 +143,10 @@ First release of the GitHub Actions:
 - [dflook/terraform-new-workspace](terraform-new-workspace)
 - [dflook/terraform-destroy-workspace](terraform-destroy-workspace)
 
+
+[1.9.0]: https://github.com/dflook/terraform-github-actions/compare/v1.8.0...v1.9.0
+[1.8.0]: https://github.com/dflook/terraform-github-actions/compare/v1.7.0...v1.8.0
+[1.7.0]: https://github.com/dflook/terraform-github-actions/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/dflook/terraform-github-actions/compare/v1.5.2...v1.6.0
 [1.5.2]: https://github.com/dflook/terraform-github-actions/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/dflook/terraform-github-actions/compare/v1.5.0...v1.5.1
