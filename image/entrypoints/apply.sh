@@ -48,7 +48,7 @@ function plan() {
 function apply() {
 
     set +e
-    (cd $INPUT_PATH && terraform apply -input=false -no-color -auto-approve -lock-timeout=300s $PLAN_OUT) | $TFMASK
+    (cd $INPUT_PATH && terraform apply -lock=false -input=false -no-color -auto-approve -lock-timeout=300s $PLAN_OUT) | $TFMASK
     local APPLY_EXIT=${PIPESTATUS[0]}
     set -e
 
