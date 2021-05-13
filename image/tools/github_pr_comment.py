@@ -374,19 +374,28 @@ class TerraformComment:
     def update_comment(self):
         body = self.collapsable_body()
         debug(body)
+        no_changes = 'No changes. Infrastructure is up-to-date.' in body
+
 
         if self._comment_url is None:
-            # Create a new comment
-            debug('Creating comment')
-            response = github_api_request('post', self._issue_url, json={'body': body})
+            if not no_changes:
+                # Create a new comment
+                debug('Creating comment')
+                response = github_api_request('post', self._issue_url, json={'body': body})
+        elif no_changes:
+            github_api_request('delete', self._comment_url, json={'body': body})
         else:
             # Update existing comment
             debug('Updating existing comment')
             response = github_api_request('patch', self._comment_url, json={'body': body})
-
-        debug(response.content.decode())
-        response.raise_for_status()
-        self._comment_url = response.json()['url']
+        try:
+            response
+        except NameError:
+            debug("No request made")
+        else:
+            debug(response.content.decode())
+            response.raise_for_status()
+            self._comment_url = response.json()['url']
 
 
 if __name__ == '__main__':
