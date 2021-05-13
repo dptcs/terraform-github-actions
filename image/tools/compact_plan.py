@@ -10,6 +10,7 @@ def compact_plan(input):
     for line in input:
 
         if not plan and (
+            line.startswith('Terraform used the selected providers') or
             line.startswith('An execution plan has been generated and is shown below') or
             line.startswith('No changes') or
             line.startswith('Error')
@@ -17,7 +18,9 @@ def compact_plan(input):
             plan = True
 
         if plan:
-            yield line
+            if not (line.startswith('Releasing state lock. This may take a few moments...')
+                    or line.startswith('Acquiring state lock. This may take a few moments...')):
+                yield line
         else:
             buffer.append(line)
 
