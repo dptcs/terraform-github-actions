@@ -36,7 +36,7 @@ function plan() {
     set +e
     (cd $INPUT_PATH && terraform plan -input=false -no-color -detailed-exitcode -lock-timeout=300s $PLAN_OUT_ARG $PLAN_ARGS) \
         2>"$PLAN_DIR/error.txt" \
-        | $TFMASK \
+        | tfmask \
         | tee /dev/fd/3 \
         | compact_plan \
             >"$PLAN_DIR/plan.txt"
