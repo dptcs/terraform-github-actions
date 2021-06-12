@@ -17,8 +17,8 @@ RUN echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config \
  && echo "IdentityFile /.ssh/id_rsa" >> /etc/ssh/ssh_config \
  && mkdir -p /.ssh
 
-RUN sudo curl -L https://github.com/cloudposse/tfmask/releases/download/0.7.0/tfmask_linux_amd64 -o /usr/bin/tfmask
-RUN sudo chmod +x /usr/bin/tfmask
+RUN curl -L https://github.com/cloudposse/tfmask/releases/download/0.7.0/tfmask_linux_amd64 -o /usr/bin/tfmask
+RUN chmod +x /usr/bin/tfmask
 
 COPY tools/http_credential_actions_helper.py /usr/bin/git-credential-actions
 RUN git config --system credential.helper /usr/bin/git-credential-actions \
